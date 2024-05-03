@@ -1,50 +1,51 @@
 #include "sort.h"
 
 /**
- * insertion_sort_list - sorts a doubly linked list of integers,
+ * insertion_sort_list - sorts a doubly linked list of integers
  * in ascending order using the Insertion sort algorithm
- * @list: the list
-**/
+ * @list: double linked llist
+ */
 
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *node, *temp, *next, *temp_next, *temp_prev;
-	int i = 0;
+	listint_t *curr, *prevprev, *prevv, *curr1, *currnext;
 
-	if (list == NULL || (*list)->next == NULL)
+	if (list == NULL)
 		return;
-	node = *list;
-	node = node->next;
-	while (node != NULL)
-	{
-		temp = node;
-		next = node->next;
-		temp_next = temp->next;
-		temp_prev = temp->prev;
 
-		while (temp->prev != NULL && temp_prev->n > temp->n)
+	curr = *list;
+
+	while (curr)
+	{
+		if (curr->prev && curr->prev->n > curr->n)
 		{
-			if (temp_next != NULL)
-				temp_next->prev = temp_prev;
-			temp_prev->next = temp_next;
-			if (temp_prev->prev == NULL)
-			{
-				temp_prev->prev = temp;
-				*list = temp;
-				temp->prev = NULL;
-			}
+			/*Store the necessary pointers for swapping*/
+			prevprev = curr->prev->prev;
+			prevv = curr->prev;
+			curr1 = curr;
+			currnext = curr->next;
+
+			/* Adjust the pointers to swap the nodes*/
+			prevv->next = currnext;
+
+			if (currnext)
+				currnext->prev = prevv;
+
+			curr1->prev = prevprev;
+			curr1->next = prevv;
+
+			if (prevprev)
+				prevprev->next = curr1;
+
 			else
-			{
-				temp->prev = temp_prev->prev;
-				temp_prev->prev->next = temp;
-				temp_prev->prev = temp;
-			}
-			temp->next = temp_prev;
-			temp_prev = temp->prev;
-			temp_next = temp->next;
+				*list = curr1;
+
+			prevv->prev = curr1;
+			curr = *list;
 			print_list(*list);
+			continue; /*Continue to the next iteration*/
 		}
-		node = next;
-		i++;
+		else
+			curr = curr->next;
 	}
 }
